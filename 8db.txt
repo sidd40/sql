@@ -1,0 +1,108 @@
+8.	Department (dept_name, building, budget)
+Student( sid, sname, tot_credits,dept_name,grade)
+Course (course_id, title, credits, dept_name)
+Takes(sid,course_id)
+•	Find the name of students who have taken some courses
+•	Find the details of the students who are in Computer department
+•	Find the names of all departments whose name includes substring “ a ”.
+
+
+->>>
+
+
+-- Create Department table
+CREATE TABLE Department (
+    dept_name VARCHAR(50) PRIMARY KEY,
+    building VARCHAR(50),
+    budget DECIMAL(10,2)
+);
+
+-- Create Student table
+CREATE TABLE Student (
+    sid INT PRIMARY KEY,
+    sname VARCHAR(50),
+    tot_credits INT,
+    dept_name VARCHAR(50),
+    grade CHAR(1),
+    FOREIGN KEY (dept_name) REFERENCES Department(dept_name)
+);
+
+-- Create Course table
+CREATE TABLE Course (
+    course_id INT PRIMARY KEY,
+    title VARCHAR(100),
+    credits INT,
+    dept_name VARCHAR(50),
+    FOREIGN KEY (dept_name) REFERENCES Department(dept_name)
+);
+
+-- Create Takes table
+CREATE TABLE Takes (
+    sid INT,
+    course_id INT,
+    PRIMARY KEY (sid, course_id),
+    FOREIGN KEY (sid) REFERENCES Student(sid),
+    FOREIGN KEY (course_id) REFERENCES Course(course_id)
+);
+
+
+-- Inserting records into the Department table
+INSERT INTO Department (dept_name, building, budget) VALUES
+('Computer', 'Building1', 100000),
+('Physics', 'Building2', 80000),
+('Chemistry', 'Building3', 90000);
+
+-- Inserting records into the Student table
+INSERT INTO Student (sid, sname, tot_credits, dept_name, grade) VALUES
+(101, 'Karan', 60, 'Computer', 'A'),
+(102, 'Pratiksha', 45, 'Physics', 'B'),
+(103, 'Rohit', 75, 'Computer', 'A'),
+(104, 'Onkar', 30, 'Chemistry', 'C'),
+(105, 'Amar', 90, 'Physics', 'A');
+
+-- Inserting records into the Course table
+INSERT INTO Course (course_id, title, credits, dept_name) VALUES
+(1, 'CS101', 3, 'Computer'),
+(2, 'PHY101', 4, 'Physics'),
+(3, 'CHEM101', 3, 'Chemistry'),
+(4, 'CS102', 4, 'Computer'),
+(5, 'PHY102', 3, 'Physics');
+
+-- Inserting records into the Takes table
+INSERT INTO Takes (sid, course_id) VALUES
+(101, 1),
+(101, 4),
+(102, 2),
+(103, 1),
+(103, 4),
+(104, 3),
+(105, 2),
+(105, 5);
+
+
+
+To answer your questions, let's break them down one by one using SQL queries:
+
+1. Find the name of students who have taken some courses:
+
+```sql
+SELECT DISTINCT sname
+FROM Student;
+
+
+2. Find the details of the students who are in the Computer department:
+
+```sql
+SELECT *
+FROM Student
+WHERE dept_name = 'Computer';
+
+
+3. Find the names of all departments whose name includes the substring "a":
+
+```sql
+SELECT dept_name
+FROM Department
+WHERE dept_name LIKE '%a%';
+
+

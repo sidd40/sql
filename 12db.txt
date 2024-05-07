@@ -1,0 +1,101 @@
+12.	Consider a relational database
+Supplier (Sid, Sname, address)
+Parts(Pid, Pname, color)
+Catalog(Sid,  Pid, cost)
+	Write SQL queries for the following:
+v)	Find the names of suppliers who supply some red parts.
+vi)	Find the names of all parts whose cost is more than Rs.250.
+vii)	Find name of all parts whose color is green.
+viii)	Find number of parts supplied by each supplier
+
+
+->>>
+
+
+-- Create Supplier table
+CREATE TABLE Supplier (
+    Sid INT PRIMARY KEY,
+    Sname VARCHAR(50),
+    address VARCHAR(100)
+);
+
+-- Insert sample data into Supplier table
+INSERT INTO Supplier (Sid, Sname, address) VALUES
+(1, 'Supplier 1', 'Address 1'),
+(2, 'Supplier 2', 'Address 2'),
+(3, 'Supplier 3', 'Address 3');
+
+-- Create Parts table
+CREATE TABLE Parts (
+    Pid INT PRIMARY KEY,
+    Pname VARCHAR(50),
+    color VARCHAR(20)
+);
+
+-- Insert sample data into Parts table
+INSERT INTO Parts (Pid, Pname, color) VALUES
+(101, 'Part 1', 'red'),
+(102, 'Part 2', 'blue'),
+(103, 'Part 3', 'green'),
+(104, 'Part 4', 'red');
+
+-- Create Catalog table
+CREATE TABLE Catalog (
+    Sid INT,
+    Pid INT,
+    cost DECIMAL(10, 2),
+    FOREIGN KEY (Sid) REFERENCES Supplier(Sid),
+    FOREIGN KEY (Pid) REFERENCES Parts(Pid)
+);
+
+-- Insert sample data into Catalog table
+INSERT INTO Catalog (Sid, Pid, cost) VALUES
+(1, 101, 200),
+(1, 102, 300),
+(2, 101, 250),
+(2, 103, 280),
+(3, 104, 260);
+
+
+
+
+v) Find the names of suppliers who supply some red parts:
+
+```sql
+
+SELECT DISTINCT Supplier.Sname
+FROM Supplier
+JOIN Catalog ON Supplier.Sid = Catalog.Sid
+JOIN Parts ON Catalog.Pid = Parts.Pid
+WHERE Parts.color = 'red';
+
+
+vi) Find the names of all parts whose cost is more than Rs.250:
+
+```sql
+
+SELECT Pname
+FROM Parts
+JOIN Catalog ON Parts.Pid = Catalog.Pid
+WHERE Catalog.cost > 250;
+
+
+vii) Find name of all parts whose color is green:
+
+```sql
+
+SELECT Pname
+FROM Parts
+WHERE color = 'green';
+
+
+viii) Find number of parts supplied by each supplier:
+
+```sql
+
+SELECT Supplier.Sname, COUNT(Catalog.Pid) AS "Number of Parts Supplied"
+FROM Supplier
+LEFT JOIN Catalog ON Supplier.Sid = Catalog.Sid
+GROUP BY Supplier.Sname;
+
+

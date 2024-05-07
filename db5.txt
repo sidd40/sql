@@ -1,0 +1,94 @@
+5.	Write a function 
+	- which will show the level of the customer whether platinum, gold or silver.
+
+->
+
+
+CREATE TABLE customers (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE purchases (
+    purchase_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    amount DECIMAL(10, 2) NOT NULL,
+    purchase_date DATE NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+
+
+
+-- Insert sample purchases for customer 1
+INSERT INTO purchases (customer_id, amount, purchase_date) VALUES
+(1, 5000.00, '2024-04-01'),
+(1, 3000.00, '2024-04-15'),
+(1, 2000.00, '2024-05-01');
+
+-- Insert sample purchases for customer 2
+INSERT INTO purchases (customer_id, amount, purchase_date) VALUES
+(2, 7000.00, '2024-03-10'),
+(2, 4000.00, '2024-04-25');
+
+-- Insert sample purchases for customer 3
+INSERT INTO purchases (customer_id, amount, purchase_date) VALUES
+(3, 8000.00, '2024-02-05'),
+(3, 2000.00, '2024-04-20');
+
+-- Insert sample purchases for customer 4
+INSERT INTO purchases (customer_id, amount, purchase_date) VALUES
+(4, 3000.00, '2024-01-15');
+
+
+
+
+DELIMITER //
+
+CREATE FUNCTION GetCustomerLevel(cust_id INT) RETURNS VARCHAR(10)
+DETERMINISTIC
+BEGIN
+    DECLARE total_purchase DECIMAL(10, 2);
+    DECLARE purchase_count INT;
+    DECLARE customer_level VARCHAR(10);
+
+    -- Calculate total purchase amount for the specified customer
+    SELECT SUM(amount) INTO total_purchase
+    FROM purchases
+    WHERE customer_id = cust_id;
+
+    -- Calculate total purchase count for the specified customer
+    SELECT COUNT(*) INTO purchase_count
+    FROM purchases
+    WHERE customer_id = cust_id;
+
+    -- Determine customer level based on the calculated values
+    IF total_purchase >= 10000 OR purchase_count >= 10 THEN
+        SET customer_level = 'Platinum';
+    ELSEIF total_purchase >= 5000 OR purchase_count >= 5 THEN
+        SET customer_level = 'Gold';
+    ELSE
+        SET customer_level = 'Silver';
+    END IF;
+
+    RETURN customer_level;
+END //
+
+DELIMITER ;
+
+
+
+-- Determine the level of each customer
+SELECT 
+    c.customer_id,
+    c.name,
+    c.email,
+    c.phone,
+    GetCustomerLevel(c.customer_id) AS customer_level
+FROM 
+    customers c;
+
+
+-- Determine the level of a specific customer (e.g., customer_id = 1)
+SELECT GetCustomerLevel(1) AS customer_level;

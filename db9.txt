@@ -1,0 +1,65 @@
+CREATE TABLE orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_date DATE,
+    total_amount DECIMAL(10, 2)
+);
+
+CREATE TABLE order_logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT,
+    deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+-- Trigger for before insert
+DELIMITER //
+CREATE TRIGGER before_insert_order
+BEFORE INSERT ON orders
+FOR EACH ROW
+BEGIN
+    -- Your logic before insert goes here
+    -- For example, you can validate the data being inserted
+    -- You can also set default values or manipulate the data
+    -- For this example, let's set a default order date if not provided
+    IF NEW.order_date IS NULL THEN
+        SET NEW.order_date = CURDATE();
+    END IF;
+END;
+//
+DELIMITER ;
+
+-- Trigger for after delete
+DELIMITER //
+CREATE TRIGGER after_delete_order
+AFTER DELETE ON orders
+FOR EACH ROW
+BEGIN
+    -- Insert a record into order_logs table after delete
+    INSERT INTO order_logs (order_id) VALUES (OLD.order_id);
+END;
+//
+DELIMITER ;
+
+
+
+-- Insert test data into the orders table
+INSERT INTO orders (order_date, total_amount) VALUES
+('2024-05-01', 100),
+('2024-05-02', 150),
+('2024-05-03', 200);
+
+
+-- Delete some records from the orders table
+DELETE FROM orders WHERE order_date = '2024-05-01';
+
+-- Check the order_logs table to verify deleted orders are logged
+SELECT * FROM order_logs;
+
+
+-- Test before insert trigger behavior
+-- Insert a record without providing an order date
+INSERT INTO orders (total_amount) VALUES (300);
+
+-- Verify that the order date is set to the current date
+SELECT * FROM orders;

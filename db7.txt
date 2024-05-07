@@ -1,0 +1,93 @@
+7.	Execute cursor without handler and with handler.
+
+
+->
+
+
+
+CREATE TABLE example_table (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    age INT,
+    email VARCHAR(255)
+);
+
+INSERT INTO example_table (name, age, email) VALUES
+('John', 30, 'john@example.com'),
+('Alice', 25, 'alice@example.com'),
+('Bob', 35, 'bob@example.com');
+
+
+DELIMITER //
+
+CREATE PROCEDURE cursor_without_handler()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE person_name VARCHAR(255);
+
+    -- Declare cursor without handler
+    DECLARE cur CURSOR FOR
+        SELECT name FROM example_table;
+
+    -- Open cursor
+    OPEN cur;
+
+    -- Fetch names from the result set
+    cursor_loop: LOOP
+        FETCH cur INTO person_name;
+        IF done THEN
+            LEAVE cursor_loop;
+        END IF;
+        
+        -- Process the fetched name
+        SELECT CONCAT('Name: ', person_name); -- For demonstration purpose
+        
+    END LOOP cursor_loop;
+
+    -- Close cursor
+    CLOSE cur;
+END//
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE cursor_with_handler()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE person_name VARCHAR(255);
+
+    -- Declare cursor with handler
+    DECLARE cur CURSOR FOR
+        SELECT name FROM example_table;
+    
+    -- Declare handler for NOT FOUND condition
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- Open cursor
+    OPEN cur;
+
+    -- Fetch names from the result set
+    cursor_loop: LOOP
+        FETCH cur INTO person_name;
+        IF done THEN
+            LEAVE cursor_loop;
+        END IF;
+
+        -- Process the fetched name
+        SELECT CONCAT('Name: ', person_name); -- For demonstration purpose
+
+    END LOOP cursor_loop;
+
+    -- Close cursor
+    CLOSE cur;
+END//
+
+DELIMITER ;
+
+
+CALL cursor_without_handler();
+
+
+CALL cursor_with_handler();

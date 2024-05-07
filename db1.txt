@@ -1,0 +1,94 @@
+1.	Write a PL/SQL block to calculate the grade of minimum 10 students.
+
+->
+
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    dob DATE,
+    address VARCHAR(255)
+);
+
+INSERT INTO students (name, dob, address) VALUES
+    ('Karan', '1998-05-15', '123 Main St'),
+    ('Rohit', '1999-09-20', '456 Elm St'),
+    ('Amar', '2000-03-10', '789 Oak St'),
+    ('Pratiksha', '1997-11-25', '321 Pine St'),
+    ('Sonia', '2001-02-28', '567 Maple St'),
+    ('Vikram', '1998-08-12', '890 Birch St'),
+    ('Neha', '2000-04-05', '432 Cedar St'),
+    ('Sandeep', '1999-12-17', '876 Willow St'),
+    ('Anjali', '2001-07-30', '654 Palm St'),
+    ('Raj', '1998-10-03', '789 Orange St'),
+    ('Sara', '1999-03-22', '543 Lemon St'),
+    ('Ajay', '2000-11-14', '210 Lime St');
+
+CREATE TABLE grades (
+    grade_id INT PRIMARY KEY,
+    student_id INT,
+    marks INT,
+    FOREIGN KEY (student_id) REFERENCES students(student_id)
+);
+
+INSERT INTO grades (student_id, marks) VALUES
+    (1, 85),
+    (2, 92),
+    (3, 78),
+    (4, 88),
+    (5, 90),
+    (6, 75),
+    (7, 82),
+    (8, 95),
+    (9, 70),
+    (10, 84),
+    (11, 91),
+    (12, 79);
+
+
+DELIMITER //
+
+CREATE PROCEDURE calculate_grades()
+BEGIN
+    DECLARE v_student_id INT;
+    DECLARE v_name VARCHAR(100);
+    DECLARE v_marks INT;
+    DECLARE v_grade VARCHAR(2);
+
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE cur CURSOR FOR SELECT student_id, marks FROM grades;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur;
+
+    grade_loop: LOOP
+        FETCH cur INTO v_student_id, v_marks;
+        IF done THEN
+            LEAVE grade_loop;
+        END IF;
+
+        -- Fetch student name from students table
+        SELECT name INTO v_name FROM students WHERE student_id = v_student_id;
+
+        IF v_marks >= 90 THEN
+            SET v_grade := 'A+';
+        ELSEIF v_marks >= 80 THEN
+            SET v_grade := 'A';
+        ELSEIF v_marks >= 70 THEN
+            SET v_grade := 'B';
+        ELSEIF v_marks >= 60 THEN
+            SET v_grade := 'C';
+        ELSE
+            SET v_grade := 'F';
+        END IF;
+
+        SELECT CONCAT('Student: ', v_name, ', Marks: ', v_marks, ', Grade: ', v_grade);
+
+    END LOOP;
+
+    CLOSE cur;
+END//
+
+DELIMITER ;
+
+
+call calculate_grades();

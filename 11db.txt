@@ -1,0 +1,98 @@
+11.	Department (dept_name, building, budget)
+Student( sid, sname, tot_credits,dept_name,grade)
+Course (course_id, title, credits, dept_name)
+Takes(sid,course_id)
+•	Find the name of students who have taken some courses
+•	Find the details of the students who are in Computer department
+•	Find the names of all departments whose name includes substring “ a ”.
+
+
+->>>>
+
+
+-- Create Department table
+CREATE TABLE Department (
+    dept_name VARCHAR(255) PRIMARY KEY,
+    building VARCHAR(255),
+    budget DECIMAL(10,2)
+);
+
+-- Create Student table
+CREATE TABLE Student (
+    sid INT PRIMARY KEY,
+    sname VARCHAR(255),
+    tot_credits INT,
+    dept_name VARCHAR(255),
+    grade VARCHAR(2),
+    FOREIGN KEY (dept_name) REFERENCES Department(dept_name)
+);
+
+-- Create Course table
+CREATE TABLE Course (
+    course_id INT PRIMARY KEY,
+    title VARCHAR(255),
+    credits INT,
+    dept_name VARCHAR(255),
+    FOREIGN KEY (dept_name) REFERENCES Department(dept_name)
+);
+
+-- Create Takes table
+CREATE TABLE Takes (
+    sid INT,
+    course_id INT,
+    FOREIGN KEY (sid) REFERENCES Student(sid),
+    FOREIGN KEY (course_id) REFERENCES Course(course_id)
+);
+
+-- Insert sample data into Department table
+INSERT INTO Department (dept_name, building, budget) VALUES
+('Computer', 'CompBuilding', 100000),
+('Mathematics', 'MathBuilding', 80000),
+('Physics', 'PhysicsBuilding', 120000);
+
+-- Insert sample data into Student table
+INSERT INTO Student (sid, sname, tot_credits, dept_name, grade) VALUES
+(1, 'John Doe', 60, 'Computer', 'A'),
+(2, 'Jane Smith', 45, 'Mathematics', 'B'),
+(3, 'Alice Johnson', 75, 'Physics', 'A');
+
+-- Insert sample data into Course table
+INSERT INTO Course (course_id, title, credits, dept_name) VALUES
+(101, 'Introduction to Programming', 3, 'Computer'),
+(102, 'Calculus', 4, 'Mathematics'),
+(103, 'Mechanics', 3, 'Physics');
+
+-- Insert sample data into Takes table
+INSERT INTO Takes (sid, course_id) VALUES
+(1, 101),
+(1, 102),
+(2, 102),
+(3, 103);
+
+
+
+
+
+i) Find the name of students who have taken some courses:
+```sql
+
+SELECT DISTINCT sname
+FROM Student;
+
+
+ii) Find the details of the students who are in Computer department:
+```sql
+
+SELECT *
+FROM Student
+WHERE dept_name = 'Computer';
+
+
+iii) Find the names of all departments whose name includes substring “a”:
+```sql
+
+SELECT dept_name
+FROM Department
+WHERE dept_name LIKE '%a%';
+
+

@@ -1,0 +1,110 @@
+3.	For University database execute following queries:
+Department (dept_name, building, budget)
+Instructor (inst_id, name, salary, dept_name)
+Course (course_id, title, credits, dept_name)
+Teaches (course_id, inst_id)
+•	Create a view to find instructor name and course for instructors in IT department.
+•	Find the names of all instructors whose salary is greater than at least one instructor in biology dept.
+•	Find titles along with department where department must end with “ y ”.
+•	Find the titles along with department name of biology department.
+
+
+
+->>>>
+
+
+-- Create tables
+CREATE TABLE Department (
+    dept_name VARCHAR(50) PRIMARY KEY,
+    building VARCHAR(50),
+    budget DECIMAL(10, 2)
+);
+
+CREATE TABLE Instructor (
+    inst_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10, 2),
+    dept_name VARCHAR(50),
+    FOREIGN KEY (dept_name) REFERENCES Department(dept_name)
+);
+
+CREATE TABLE Course (
+    course_id INT PRIMARY KEY,
+    title VARCHAR(100),
+    credits INT,
+    dept_name VARCHAR(50),
+    FOREIGN KEY (dept_name) REFERENCES Department(dept_name)
+);
+
+CREATE TABLE Teaches (
+    course_id INT,
+    inst_id INT,
+    FOREIGN KEY (course_id) REFERENCES Course(course_id),
+    FOREIGN KEY (inst_id) REFERENCES Instructor(inst_id),
+    PRIMARY KEY (course_id, inst_id)
+);
+
+-- Insert sample data
+INSERT INTO Department (dept_name, building, budget) VALUES
+('IT', 'Tech Building', 100000),
+('Biology', 'Science Building', 150000);
+
+INSERT INTO Instructor (inst_id, name, salary, dept_name) VALUES
+(1, 'John Doe', 60000, 'IT'),
+(2, 'Jane Smith', 65000, 'Biology'),
+(3, 'Michael Johnson', 55000, 'IT'),
+(4, 'Emily Davis', 62000, 'Biology');
+
+INSERT INTO Course (course_id, title, credits, dept_name) VALUES
+(101, 'Database Management', 3, 'IT'),
+(102, 'Data Structures', 4, 'IT'),
+(103, 'Biology 101', 3, 'Biology'),
+(104, 'Anatomy and Physiology', 4, 'Biology');
+
+INSERT INTO Teaches (course_id, inst_id) VALUES
+(101, 1),
+(102, 3),
+(103, 2),
+(104, 4);
+
+
+
+
+Here are the SQL queries for each of your requirements:
+
+1. **Create a view to find instructor name and course for instructors in IT department:**
+```sql
+
+CREATE VIEW IT_Instructors_Courses AS
+SELECT Instructor.name, Course.title
+FROM Instructor
+JOIN Teaches ON Instructor.inst_id = Teaches.inst_id
+JOIN Course ON Teaches.course_id = Course.course_id
+WHERE Instructor.dept_name = 'IT';
+
+
+2. **Find the names of all instructors whose salary is greater than at least one instructor in biology dept:**
+```sql
+
+SELECT DISTINCT i.name
+FROM Instructor i
+WHERE i.salary > ANY (SELECT salary FROM Instructor WHERE dept_name = 'Biology');
+
+
+3. **Find titles along with department where department must end with "y":**
+```sql
+
+SELECT c.title, c.dept_name
+FROM Course c
+JOIN Department d ON c.dept_name = d.dept_name
+WHERE LOWER(RIGHT(d.dept_name, 1)) = 'y';
+
+
+4. **Find the titles along with department name of the biology department:**
+```sql
+
+SELECT c.title, c.dept_name
+FROM Course c
+WHERE c.dept_name = 'Biology';
+
+

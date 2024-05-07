@@ -1,0 +1,50 @@
+3.	Write a function 
+-	that accepts employee number and return the salary status as low, high, based on his salary.
+
+
+->  
+
+
+CREATE TABLE employees (
+    name VARCHAR(100),
+    salary INT
+);
+
+INSERT INTO employees (name, salary) VALUES
+    ('Karan Rajput', 30000),
+    ('Rogit Musale', 50000),
+    ('Amar Thange', 70000),
+    ('Pratiksha Patil', 45000);
+
+
+
+DELIMITER //
+CREATE FUNCTION get_salary_status(employee_name VARCHAR(100))
+RETURNS VARCHAR(10)
+READS SQL DATA
+BEGIN
+    DECLARE salary_status VARCHAR(10);
+    DECLARE employee_salary INT;
+    
+    -- Retrieve salary based on employee name
+    SELECT salary INTO employee_salary FROM employees WHERE name = employee_name;
+    
+    -- Determine salary status
+    IF employee_salary IS NULL THEN
+        SET salary_status = 'Employee not found';
+    ELSEIF employee_salary < 40000 THEN
+        SET salary_status = 'Low';
+    ELSE
+        SET salary_status = 'High';
+    END IF;
+    
+    RETURN salary_status;
+END //
+DELIMITER ;
+
+
+//LOW
+SELECT get_salary_status('Karan Rajput');
+
+//HIGH
+SELECT get_salary_status('Rogit Musale');

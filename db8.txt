@@ -1,0 +1,48 @@
+8.	Write a procedure 
+-	To perform arithmetic operations.
+
+
+->>>
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE perform_arithmetic_operations(
+    IN num1 DECIMAL(10,2),
+    IN num2 DECIMAL(10,2)
+)
+BEGIN
+    DECLARE result_add INT;
+    DECLARE result_sub INT;
+    DECLARE result_mul INT;
+    DECLARE result_div INT;
+
+    -- Addition
+    SET result_add = CAST(num1 + num2 AS SIGNED);
+
+    -- Subtraction
+    SET result_sub = CAST(num1 - num2 AS SIGNED);
+
+    -- Multiplication
+    SET result_mul = CAST(num1 * num2 AS SIGNED);
+
+    -- Division
+    IF num2 != 0 THEN
+        SET result_div = CAST(num1 / num2 AS SIGNED);
+    ELSE
+        SET result_div = NULL;
+    END IF;
+
+    -- Display results
+    SELECT CONCAT('Addition: ', result_add) AS 'Operation',
+           CONCAT('Subtraction: ', result_sub) AS 'Operation',
+           CONCAT('Multiplication: ', result_mul) AS 'Operation',
+           CONCAT('Division: ', result_div) AS 'Operation';
+END//
+
+DELIMITER ;
+
+
+
+CALL perform_arithmetic_operations(10, 5);

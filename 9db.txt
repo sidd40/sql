@@ -1,0 +1,86 @@
+CREATE TABLE Student (
+    RollNo INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Address VARCHAR(100)
+);
+
+CREATE TABLE Subject (
+    SubCode VARCHAR(10) PRIMARY KEY,
+    SubName VARCHAR(50)
+);
+
+CREATE TABLE Marks (
+    RollNo INT,
+    SubCode VARCHAR(10),
+    Marks INT,
+    FOREIGN KEY (RollNo) REFERENCES Student(RollNo),
+    FOREIGN KEY (SubCode) REFERENCES Subject(SubCode),
+    PRIMARY KEY (RollNo, SubCode)
+);
+
+
+INSERT INTO Student (RollNo, Name, Address) VALUES
+(101, 'Karan', 'Address1'),
+(102, 'Rohit', 'Address2'),
+(103, 'Amar', 'Address3'),
+(104, 'Onkar', 'Address4'),
+(105, 'Pratiksha', 'Address5');
+
+INSERT INTO Subject (SubCode, SubName) VALUES
+('DBMS', 'Database Management System'),
+('OS', 'Operating System'),
+('TOC', 'Theory of Computation');
+
+INSERT INTO Marks (RollNo, SubCode, Marks) VALUES
+(101, 'DBMS', 85),
+(101, 'OS', 75),
+(101, 'TOC', 90),
+(102, 'DBMS', 70),
+(102, 'OS', 65),
+(102, 'TOC', 80),
+(103, 'DBMS', 80),
+(103, 'OS', 60),
+(103, 'TOC', 85),
+(104, 'DBMS', 55),
+(104, 'OS', 45),
+(104, 'TOC', 70),
+(105, 'DBMS', 75),
+(105, 'OS', 80),
+(105, 'TOC', 95);
+
+
+
+
+i) Find average marks of each student, along with the name of the student:
+```sql
+
+SELECT s.Name, AVG(m.Marks) AS AverageMarks
+FROM Student s
+JOIN Marks m ON s.RollNo = m.RollNo
+GROUP BY s.RollNo, s.Name;
+
+
+ii) Find how many students have failed in the subject “DBMS”:
+```sql
+
+SELECT COUNT(*) AS FailedStudents
+FROM Marks
+WHERE SubCode = 'DBMS' AND Marks < 40;
+
+
+iii) Find the number of students who have passed in “OS”:
+```sql
+
+SELECT COUNT(*) AS PassedStudents
+FROM Marks
+WHERE SubCode = 'OS' AND Marks >= 40;
+
+
+iv) Find the maximum marks of the subject “TOC”:
+```sql
+
+SELECT MAX(Marks) AS MaxMarksTOC
+FROM Marks
+WHERE SubCode = 'TOC';
+
+

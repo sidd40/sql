@@ -1,0 +1,54 @@
+10.	Execute row level trigger.
+
+
+->
+
+
+CREATE TABLE employee1234 (
+    employee_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10, 2),
+    department VARCHAR(100)
+);
+
+INSERT INTO employee1234 (name, salary, department) VALUES
+('John Doe', 50000, 'HR'),
+('Jane Smith', 60000, 'Finance'),
+('Michael Johnson', 75000, 'IT');
+
+
+-- Create the row-level trigger
+DELIMITER //
+CREATE TRIGGER update_department_trigger
+BEFORE INSERT ON employee1234
+FOR EACH ROW
+BEGIN
+    IF NEW.salary < 50000 THEN
+        SET NEW.department = 'Staff';
+    ELSEIF NEW.salary BETWEEN 50000 AND 60000 THEN
+        SET NEW.department = 'HR';
+    ELSEIF NEW.salary BETWEEN 60001 AND 70000 THEN
+        SET NEW.department = 'Finance';
+    ELSEIF NEW.salary BETWEEN 70001 AND 80000 THEN
+        SET NEW.department = 'IT';
+    ELSE
+        SET NEW.department = 'Management';
+    END IF;
+END;
+//
+DELIMITER ;
+
+
+
+-- Inserting new records into the employee1234 table
+INSERT INTO employee1234 (name, salary) VALUES
+('Emily Johnson', 48000),   -- Staff
+('David Brown', 59000),     -- HR
+('Sophia Garcia', 68000),   -- Finance
+('Daniel Martinez', 76000), -- IT
+('Olivia Hernandez', 82000);-- Management
+
+
+
+-- Select all records from the employee1234 table
+SELECT * FROM employee1234;

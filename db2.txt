@@ -1,0 +1,66 @@
+2.	Write a procedure 
+-	to add new employee into emp table
+-	which will return number of employees working in the department. Pass the dept no.
+
+
+
+CREATE TABLE emp (
+    empno    INT PRIMARY KEY,
+    ename    VARCHAR(50),
+    job      VARCHAR(50),
+    mgr      INT,
+    hiredate DATE,
+    sal      DECIMAL(10, 2),
+    comm     DECIMAL(10, 2),
+    deptno   INT
+);
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE add_employee(
+    IN p_empno INT,
+    IN p_ename VARCHAR(50),
+    IN p_job VARCHAR(50),
+    IN p_mgr INT,
+    IN p_hiredate DATE,
+    IN p_sal DECIMAL(10, 2),
+    IN p_comm DECIMAL(10, 2),
+    IN p_deptno INT,
+    OUT p_num_employees INT
+)
+BEGIN
+    -- Insert the new employee into the emp table
+    INSERT INTO emp(empno, ename, job, mgr, hiredate, sal, comm, deptno)
+    VALUES(p_empno, p_ename, p_job, p_mgr, p_hiredate, p_sal, p_comm, p_deptno);
+    
+    -- Count the number of employees in the specified department
+    SELECT COUNT(*)
+    INTO p_num_employees
+    FROM emp
+    WHERE deptno = p_deptno;
+END //
+
+DELIMITER ;
+
+
+
+SET @v_num_employees = NULL;
+
+CALL add_employee(
+    1234,            -- p_empno
+    'Karan Rajput',  -- p_ename
+    'Manager',       -- p_job
+    7839,            -- p_mgr
+    '2024-05-06',    -- p_hiredate
+    5000,            -- p_sal
+    NULL,            -- p_comm
+    10,              -- p_deptno
+    @v_num_employees -- p_num_employees
+);
+
+
+
+-- Output the number of employees in the department after adding the new employee
+SELECT @v_num_employees AS num_employees;

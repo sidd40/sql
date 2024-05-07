@@ -1,0 +1,111 @@
+1.	For University database execute following queries:
+Department (dept_name, building, budget)
+Instructor (inst_id, name, salary, dept_name)
+Course (course_id, title, credits, dept_name)
+Teaches (course_id, inst_id)
+•	Create a view to find out only instructors who have taught some course.
+•	Find the names of all departments whose name includes substring “ i ” 
+•	Find titles along with department where department must end with “ y ”.
+•	Execute join operations.
+
+
+
+->
+
+
+CREATE TABLE Department (
+    dept_name VARCHAR(255) PRIMARY KEY,
+    building VARCHAR(255),
+    budget DECIMAL(10, 2)
+);
+
+CREATE TABLE Instructor (
+    inst_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255),
+    salary DECIMAL(10, 2),
+    dept_name VARCHAR(255),
+    FOREIGN KEY (dept_name) REFERENCES Department(dept_name)
+);
+
+CREATE TABLE Course (
+    course_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255),
+    credits INT,
+    dept_name VARCHAR(255),
+    FOREIGN KEY (dept_name) REFERENCES Department(dept_name)
+);
+
+CREATE TABLE Teaches (
+    course_id INT,
+    inst_id INT,
+    FOREIGN KEY (course_id) REFERENCES Course(course_id),
+    FOREIGN KEY (inst_id) REFERENCES Instructor(inst_id)
+);
+
+
+INSERT INTO Department (dept_name, building, budget) VALUES
+('Computer Science', 'Science Building', 500000),
+('Mathematics', 'Math Building', 400000),
+('Physics', 'Physics Building', 450000);
+
+INSERT INTO Instructor (name, salary, dept_name) VALUES
+('John Doe', 60000, 'Computer Science'),
+('Jane Smith', 55000, 'Mathematics'),
+('Michael Johnson', 62000, 'Physics'),
+('Emily Davis', 58000, 'Computer Science');
+
+INSERT INTO Course (title, credits, dept_name) VALUES
+('Introduction to Programming', 3, 'Computer Science'),
+('Calculus I', 4, 'Mathematics'),
+('Mechanics', 3, 'Physics'),
+('Data Structures', 3, 'Computer Science');
+
+INSERT INTO Teaches (course_id, inst_id) VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4);
+
+
+
+1. **Create a view to find out only instructors who have taught some course:**
+```sql
+
+CREATE VIEW InstructorsWithCourses AS
+SELECT DISTINCT i.inst_id, i.name, i.dept_name
+FROM Instructor i
+JOIN Teaches t ON i.inst_id = t.inst_id;
+
+
+2. **Find the names of all departments whose name includes substring "i":**
+```sql
+
+SELECT dept_name
+FROM Department
+WHERE dept_name LIKE '%i%';
+
+
+3. **Find titles along with department where department must end with "y":**
+```sql
+
+SELECT c.title, c.dept_name
+FROM Course c
+JOIN Department d ON c.dept_name = d.dept_name
+WHERE d.dept_name LIKE '%y';
+
+
+4. **Execute join operations:**
+```sql
+
+-- Example 1: Joining Instructor with Department
+SELECT i.name, d.dept_name
+FROM Instructor i
+JOIN Department d ON i.dept_name = d.dept_name;
+
+-- Example 2: Joining Course with Teaches to find instructors who teach a specific course
+SELECT c.title, i.name
+FROM Course c
+JOIN Teaches t ON c.course_id = t.course_id
+JOIN Instructor i ON t.inst_id = i.inst_id;
+
+

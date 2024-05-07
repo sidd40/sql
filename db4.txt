@@ -1,0 +1,47 @@
+4.	Write a function
+-	which will return number of employees working in the department. Pass the dept no.
+
+
+->
+
+
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    employee_name VARCHAR(50),
+    department_no CHAR(50)
+);
+
+
+INSERT INTO employees123 (employee_id, employee_name, department_no)
+VALUES
+    (1, 'Karan Rajput', 'HR'),
+    (2, 'Rohit Musale', 'IT'),
+    (3, 'Pratiksha Patil', 'IT'),
+    (4, 'Emily Brown', 'HR'),
+    (5, 'Chris Lee', 'Finance');
+
+
+
+DELIMITER //
+
+CREATE FUNCTION GetNumberOfEmployeesInDepartment(dept_name VARCHAR(50))
+RETURNS INT
+READS SQL DATA
+BEGIN
+    DECLARE num_employees INT;
+    
+    SELECT COUNT(*) INTO num_employees
+    FROM employees123
+    WHERE department_no = dept_name;
+    
+    RETURN num_employees;
+END//
+
+DELIMITER ;
+
+
+
+SELECT GetNumberOfEmployeesInDepartment('Finance') AS Finance_Employees_Count;
+
+
+SELECT GetNumberOfEmployeesInDepartment('IT') AS IT_Employees_Count;

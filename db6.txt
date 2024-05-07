@@ -1,0 +1,51 @@
+6.	Write a function which 
+-	will accept input as a number and print whether it is even or odd
+-	will find the largest number among three numbers.
+
+
+
+
+->
+
+
+DELIMITER //
+
+CREATE FUNCTION CheckEvenOdd(num INT)
+RETURNS VARCHAR(20)
+DETERMINISTIC
+BEGIN
+    DECLARE result VARCHAR(20);
+    
+    IF num % 2 = 0 THEN
+        SET result = 'Even';
+    ELSE
+        SET result = 'Odd';
+    END IF;
+    
+    RETURN result;
+END//
+
+CREATE FUNCTION FindLargest(a INT, b INT, c INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE largest INT;
+    
+    IF a >= b AND a >= c THEN
+        SET largest = a;
+    ELSEIF b >= a AND b >= c THEN
+        SET largest = b;
+    ELSE
+        SET largest = c;
+    END IF;
+    
+    RETURN largest;
+END//
+
+DELIMITER ;
+
+
+
+SELECT CheckEvenOdd(5); -- Output: Odd
+
+SELECT FindLargest(10, 5, 8); -- Output: 10

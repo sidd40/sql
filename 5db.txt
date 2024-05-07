@@ -1,0 +1,108 @@
+5.	For University database execute following queries:
+Department (dept_name, building, budget)
+Instructor (inst_id, name, salary, dept_name)
+Course (course_id, title, credits, dept_name)
+Teaches (course_id, inst_id)
+•	Find the names of all instructors in music dept who have salary greater than 50000.
+•	Find the details of instructors who are teaching some courses
+•	List all instructors along with the courses that they teach.
+•	List instructors in descending order
+
+
+
+
+-- Create tables
+CREATE TABLE Department (
+    dept_name VARCHAR(50) PRIMARY KEY,
+    building VARCHAR(50),
+    budget DECIMAL(10, 2)
+);
+
+CREATE TABLE Instructor (
+    inst_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10, 2),
+    dept_name VARCHAR(50),
+    FOREIGN KEY (dept_name) REFERENCES Department(dept_name)
+);
+
+CREATE TABLE Course (
+    course_id INT PRIMARY KEY,
+    title VARCHAR(100),
+    credits INT,
+    dept_name VARCHAR(50),
+    FOREIGN KEY (dept_name) REFERENCES Department(dept_name)
+);
+
+CREATE TABLE Teaches (
+    course_id INT,
+    inst_id INT,
+    FOREIGN KEY (course_id) REFERENCES Course(course_id),
+    FOREIGN KEY (inst_id) REFERENCES Instructor(inst_id),
+    PRIMARY KEY (course_id, inst_id)
+);
+
+-- Insert sample data
+INSERT INTO Department (dept_name, building, budget) VALUES
+('IT', 'Tech Building', 100000),
+('Biology', 'Science Building', 150000),
+('Music', 'Arts Building', 100000);
+
+INSERT INTO Instructor (inst_id, name, salary, dept_name) VALUES
+(1, 'John Doe', 60000, 'IT'),
+(2, 'Jane Smith', 65000, 'Biology'),
+(3, 'Michael Johnson', 55000, 'IT'),
+(4, 'Emily Davis', 62000, 'Biology'),
+(5, 'Emily Brown', 48000, 'Music'),
+(6, 'David Lee', 52000, 'Music');
+
+
+INSERT INTO Course (course_id, title, credits, dept_name) VALUES
+(101, 'Database Management', 3, 'IT'),
+(102, 'Data Structures', 4, 'IT'),
+(103, 'Biology 101', 3, 'Biology'),
+(104, 'Anatomy and Physiology', 4, 'Biology');
+
+INSERT INTO Teaches (course_id, inst_id) VALUES
+(101, 1),
+(102, 3),
+(103, 2),
+(104, 4);
+
+
+
+Here are the SQL queries for the tasks you provided:
+
+1. **Find the names of all instructors in the Music department who have a salary greater than 50000:**
+```sql
+
+SELECT name
+FROM Instructor
+WHERE dept_name = 'Music' AND salary > 50000;
+
+
+2. **Find the details of instructors who are teaching some courses:**
+```sql
+
+SELECT *
+FROM Instructor
+WHERE inst_id IN (SELECT DISTINCT inst_id FROM Teaches);
+
+
+3. **List all instructors along with the courses that they teach:**
+```sql
+
+SELECT I.name, C.title
+FROM Instructor I
+INNER JOIN Teaches T ON I.inst_id = T.inst_id
+INNER JOIN Course C ON T.course_id = C.course_id;
+
+
+4. **List instructors in descending order of their names:**
+```sql
+
+SELECT *
+FROM Instructor
+ORDER BY name DESC;
+
+
